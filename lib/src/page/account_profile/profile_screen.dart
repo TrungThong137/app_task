@@ -1,10 +1,14 @@
+import 'package:app_task/src/configs/constants/app_space.dart';
 import 'package:app_task/src/configs/widget/diaglog/dialog.dart';
 import 'package:app_task/src/page/login/login.dart';
 import 'package:app_task/src/resource/firebase/authentication_server.dart';
 import 'package:app_task/src/utils/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../configs/constants/constants.dart';
@@ -31,20 +35,22 @@ class _ProfileAccountScreenState extends State<ProfileAccountScreen> {
 
   Future<void> inforUser() async {
     final docRef = FirebaseFirestore.instance
-        .collection('user')
+        .collection('user_appTask')
         .doc(FirebaseAuth.instance.currentUser!.uid);
     final userSnap = await docRef.get();
     final pref = await SharedPreferences.getInstance();
     if (userSnap.exists && userSnap.data() != null) {
-      final data = userSnap.data();
+      final data= userSnap.data();
       await pref.setString('idUser', data!['idUser']);
       await pref.setString('fullName', data['fullName']);
       await pref.setString('emailAddress', data['emailAddress']);
+      await pref.setString('dateCreate', data['dateCreate']);
     }
     users = Users(
       emailAddress: pref.getString('emailAddress'),
       fullName: pref.getString('fullName'),
-      idUser: pref.getString('idUser')
+      idUser: pref.getString('idUser'),
+      dateCreate: pref.getString('dateCreate'),
     );
     setState(() {});
   }
@@ -52,12 +58,16 @@ class _ProfileAccountScreenState extends State<ProfileAccountScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          headerProfileAccount(),
-          buildBodyProfileAccount(),
-        ],
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: SizeToPadding.sizeMedium),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            headerProfileAccount(),
+            buildCircleAccount(),
+            buildBodyProfileAccount(),
+          ],
+        ),
       ),
     );
   }
@@ -65,139 +75,88 @@ class _ProfileAccountScreenState extends State<ProfileAccountScreen> {
   Widget headerProfileAccount(){
     return Container(
       // color: AppColors.COLOR_GREEN,
-      alignment: Alignment.center,
-      padding: EdgeInsets.symmetric(vertical: SizeToPadding.sizeBig),
+      padding: EdgeInsets.symmetric(vertical: SizeToPadding.sizeBig,),
       child: Paragraph(
-        content: 'My Account',
-        style: STYLE_MEDIUM.copyWith(
+        content: 'Profile',
+        style: STYLE_VERY_BIG.copyWith(
           color: AppColors.BLACK_500,
-          fontWeight: FontWeight.bold,
-          fontSize: 20
+          fontWeight: FontWeight.w800,
         )
       ),
     );
   }
 
-  Widget informationUser(){
-    return Column(
-      children: [
-        Center(
-          child: Paragraph(content: users?.fullName??'',
-            style: STYLE_BIG.copyWith(
-              fontWeight: FontWeight.w600
-            ),
+  Widget buildCircleAccount(){
+    return Center(
+      child: Container(
+        alignment: Alignment.center,
+        height: 100,
+        width: 100,
+        decoration: const BoxDecoration(
+          color: AppColors.COLOR_GREY_BLUE,
+          borderRadius: BorderRadius.all(
+            Radius.circular(100))
+        ),
+        child: const CircleAvatar(
+          backgroundColor: AppColors.COLOR_WHITE,
+          radius: 40,
+          child: Icon(
+            Icons.person,
+            size: 75,
+            color: AppColors.COLOR_GREY_BLUE,
           ),
         ),
-        Paragraph(content: users?.emailAddress??'',
-          style: STYLE_BIG.copyWith(
-            fontWeight: FontWeight.w600
-          ),
-        )
-      ],
+      ),
     );
   }
 
-  Widget buildBodyProfileAccount() {
+  Widget informationUser({String? title, String? content, Color? color}){
     return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: SpaceBox.sizeMedium, vertical: SpaceBox.sizeLarge),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      padding: EdgeInsets.symmetric(vertical: SizeToPadding.sizeSmall),
+      child: Row(
         children: [
-          informationUser(),
-          SizedBox(height: SpaceBox.sizeBig,),
-          // labelListItem(),
-          // buildChangePassword(),
-          buildHistoryDone(),
-          buildDeletedAccount(),
-          buildLogout()
+          Paragraph(
+            content: '$title',
+            style: STYLE_MEDIUM.copyWith(
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
+          ),
+          SizedBox(width: SizeToPadding.sizeMedium,),
+          Paragraph(
+            content: content??'',
+            style: STYLE_MEDIUM.copyWith(
+              fontWeight: FontWeight.w400
+            ),
+          )
         ],
       ),
     );
   }
 
-  Widget labelListItem() {
-    return const Paragraph(
-      content: 'Bảng điều khiển',
-      style: STYLE_SMALL_BOLD,
-    );
-  }
-
-  Widget buildChangePassword() {
-    return itemDashBoard(
-      content: 'Đổi mật khẩu',
-      icon: Icons.edit,
-      ontap: () {
-        // _viewModel!.onChangePassword(context, _viewModel!.users);
-      },
-    );
-  }
-
-  Widget buildHistoryDone() {
-    return itemDashBoard(
-      content: 'History',
-      icon: Icons.history,
-      ontap: () {
-        Navigator.pushReplacement(context, MaterialPageRoute(
-          builder: (context) => const BottomNavigationBarScreen(page: 1,),));
-          },
-    );
-  }
-
-  Widget labelMyAccount() {
-    return const Paragraph(
-      content: 'Tài khoản của tôi',
-      style: STYLE_SMALL_BOLD,
-    );
-  }
-
-  Widget buildDeletedAccount() {
-    return itemDashBoard(
-      content: 'Delete account',
-      icon: Icons.delete,
-      isShowArrowForward: false,
-      ontap: () async{
-        await onDeleteAccount();
-      }
-    );
-  }
-
-  Widget buildLogout() {
-    return itemDashBoard(
-      content: 'Logout',
-      icon: Icons.logout,
-      isShowArrowForward: false,
-      ontap: () async{
-        await onLogout();
-      }
-    );
-  }
-
-  Widget itemDashBoard({String? content, IconData? icon, Function? ontap, 
-    bool isShowArrowForward=true}){
-    return Container(
-      margin: EdgeInsets.only(top: BorderRadiusSize.sizeSmall),
-      decoration: BoxDecoration(
-        color: AppColors.BLACK_100,
-        borderRadius: BorderRadius.circular(BorderRadiusSize.sizeBig),
-      ),
-      child: ListTile(
-        onTap: (){
-          if(ontap!=null){
-            ontap();
-          }
-        },
-        leading: Icon(icon),
-        title: Paragraph(
-          content: content,
-          style: STYLE_MEDIUM_BOLD,
-        ),
-        trailing: Visibility(
-          visible: isShowArrowForward,
-          child: const Icon(Icons.arrow_forward_ios_rounded)),
+  Widget buildBodyProfileAccount() {
+    return Padding(
+      padding: EdgeInsets.all(SizeToPadding.sizeVeryBig),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          informationUser(title: 'Name:', content: users?.fullName),
+          informationUser(title: 'Email:', content: users?.emailAddress),
+          informationUser(title: 'Member Since:', 
+            content: DateFormat('HH:mm dd-MM-yyyy').format(
+              DateFormat('yyyy-MM-dd HH:mm').parse(users?.dateCreate
+              ??DateTime.now().toString())
+            )),
+          GestureDetector(
+            onTap: () async{
+              await onLogout();
+            },
+            child: informationUser(title: 'Log Out', color: AppColors.Red_Money)
+          ),
+        ],
       ),
     );
-  }
+  }  
 
   void goToLogin(){
     Navigator.pushReplacement(context, MaterialPageRoute(

@@ -13,6 +13,7 @@ class FireStoreUser {
         'idUser': user.idUser,
         'fullName': user.fullName,
         'emailAddress': user.emailAddress,
+        'dateCreate': user.dateCreate,
       });
       return true;
     } 

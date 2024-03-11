@@ -60,19 +60,15 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
           onTap: (index)=> changePage(index),
           items: const[
             BottomNavigationBarItem(
-              icon: Icon(Icons.edit),
-              label:"Input",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.history),
-              label: "History",
+              icon: Icon(Icons.home),
+              label:"Home",
             ),
             // BottomNavigationBarItem(
             //   icon: Icon(Icons.notifications),
             //   label: "notification",
             // ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.person),
+              icon: Icon(Icons.account_circle_rounded),
               label:"Profile",
             ),
           ],
@@ -83,8 +79,6 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
 
   Widget getBody()  {
     if(selectedIndex == 0) {
-      return  Container();
-    } else if(selectedIndex==1) {
       return Container();
     }else{
       return const ProfileAccountScreen();

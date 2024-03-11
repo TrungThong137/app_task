@@ -23,6 +23,7 @@ class Authentication {
           idUser: user.user!.uid,
           fullName: fullName,
           emailAddress: email,
+          dateCreate: DateTime.now().toString(),
         ));
         if (check == true) {
           onSuccess();

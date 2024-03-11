@@ -153,14 +153,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> goToTarget(BuildContext context) async {
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const TargetBodyScreen(),
-        ));
-  }
-
   Future<void> goToHome(BuildContext context) async {
     Navigator.pushReplacement(
         context,
@@ -169,25 +161,13 @@ class _LoginScreenState extends State<LoginScreen> {
         ));
   }
 
-  Future<void> onCheckScreen() async{
-    final id = await AppPref.getDataUSer('id');
-    final pref = await AppPref.getPage('$id') ?? true;
-    print(id.toString());
-    print(pref);
-    if (pref) {
-      await goToTarget(context);
-    } else {
-      await goToHome(context);
-    }
-  }
-
-  void onLoginButton() {
+  void onLoginButton(){
     LoadingDialog.showLoadingDialog(context);
     Authentication()
         .signIn(mailController.text.trim(), passController.text.trim(), 
-    () {
+    () async{
       LoadingDialog.hideLoadingDialog(context);
-      onCheckScreen();
+      await goToHome(context);
     }, (msg) {
       LoadingDialog.hideLoadingDialog(context);
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

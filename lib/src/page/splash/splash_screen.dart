@@ -38,14 +38,6 @@ class _SplashScreenState extends State<SplashScreen> {
   // =>
   //     Navigator.pushNamed(context, Routers.signIn);
 
-  Future<void> goToTarget(BuildContext context) async {
-    Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const TargetBodyScreen(),
-        ));
-  }
-
   Future<void> goToHome(BuildContext context) async {
     Navigator.pushReplacement(
         context,
@@ -57,16 +49,12 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> _init() async {
     // _goToSignIn(context);
     final id = await AppPref.getDataUSer('id');
-    final pref = await AppPref.getPage('$id') ?? true;
+    // final pref = await AppPref.getPage('$id') ?? true;
     final token = await AppPref.getToken();
     if (token == null || token.isEmpty) {
       await goToLogin(context);
     } else {
-      if (pref) {
-        await goToTarget(context);
-      } else {
-        await goToHome(context);
-      }
+      await goToHome(context);
     }
   }
 
