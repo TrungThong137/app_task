@@ -1,15 +1,19 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:app_task/src/configs/constants/app_space.dart';
 import 'package:app_task/src/configs/widget/button/button.dart';
 import 'package:app_task/src/configs/widget/diaglog/dialog.dart';
 import 'package:app_task/src/configs/widget/loading/loading_diaglog.dart';
 import 'package:app_task/src/page/bottom_navigator/bottom_navigator_screen.dart';
+import 'package:app_task/src/page/login/components/clipper.dart';
 import 'package:app_task/src/page/register/register.dart';
 import 'package:app_task/src/resource/firebase/authentication_server.dart';
 import 'package:app_task/src/utils/app_valid.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../configs/constants/constants.dart';
 import '../../configs/widget/form_field/app_form_field.dart';
@@ -48,31 +52,16 @@ class _LoginScreenState extends State<LoginScreen> {
         top: true,
         child: Scaffold(
           resizeToAvoidBottomInset: true,
-          backgroundColor: AppColors.COLOR_PINK_200,
-          body: SingleChildScrollView(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
-                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 40, horizontal: SpaceBox.sizeMedium),
-                  child: Column(
-                    children: [
-                      buildLogin(),
-                      buildFieldMail(),
-                      buildFieldPass(),
-                      buildLoginButton(),
-                      const SizedBox(height: 20),
-                      buildSignUpWidget(),
-                    ],
-                  ),
-                ),
-              ),
+          backgroundColor: AppColors.BLACK_200,
+          body: SizedBox(
+            height: MediaQuery.sizeOf(context).height,
+            width: double.maxFinite,
+            child: Column(
+              children: [
+                buildImageLogin(),
+                buildFormLogin(),
+                buildTailLogin(),
+              ],
             ),
           ),
         ),
@@ -80,12 +69,73 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget buildLogin() {
+  Widget buildContentImageLogin(){
     return Padding(
-      padding: const EdgeInsets.only(bottom: 40),
-      child: Paragraph(
-        content: 'Sign In',
-        style: STYLE_BIG.copyWith(fontWeight: FontWeight.w600, fontSize: 25),
+      padding: EdgeInsets.only(top: SizeToPadding.sizeBig),
+      child: Column(
+        children: [
+          Paragraph(
+            content: 'To Do List',
+            style: STYLE_VERY_BIG.copyWith(
+              fontWeight: FontWeight.w600,
+              fontSize: 40,
+              color: AppColors.COLOR_WHITE,
+            ),
+          ),
+          Paragraph(
+            content: 'Get things done',
+            style: STYLE_VERY_BIG.copyWith(
+              fontWeight: FontWeight.w500,
+              fontSize: 30,
+              color: AppColors.COLOR_WHITE,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget buildImageLogin(){
+    return Container(
+      color: AppColors.COLOR_WHITE,
+      height: 300,
+      child: ClipPath(
+        clipper: HeaderClipper(),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                color: AppColors.COLOR_PINK
+              ),
+            ),
+            buildContentImageLogin(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildFormLogin(){
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.9),
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              vertical: 20, horizontal: SpaceBox.sizeMedium),
+          child: Column(
+            children: [
+              buildFieldMail(),
+              buildFieldPass(),
+              buildLoginButton(),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -126,30 +176,45 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget buildSignUpWidget() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Paragraph(
-          content: 'Do not have an account? ',
-          style: STYLE_SMALL_BOLD.copyWith(
-              // color: AppColors,
-              ),
+        Padding(
+          padding: EdgeInsets.only(top: SizeToPadding.sizeVeryBig),
+          child: Paragraph(
+            content: 'New around here?',
+            style: STYLE_MEDIUM.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
-        TextButton(
-          onPressed: () async {
+        GestureDetector(
+          onTap: () async {
             await Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const RegisterScreen(),
-                ));
+              context,
+              MaterialPageRoute(
+                builder: (context) => const RegisterScreen(),
+              ));
           },
           child: Paragraph(
-            content: 'Sign up',
-            style: STYLE_SMALL_BOLD.copyWith(
-                color: AppColors.COLOR_PINK_200, fontWeight: FontWeight.bold),
+            content: 'Create An Account',
+            style: STYLE_MEDIUM.copyWith(
+                color: AppColors.COLOR_PINK_200, 
+                fontWeight: FontWeight.w600
+            ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget buildTailLogin(){
+    return Expanded(
+      child: Container(
+        width: double.maxFinite,
+        color: AppColors.COLOR_WHITE,
+        child: buildSignUpWidget(),
+      ),
     );
   }
 

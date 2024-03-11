@@ -2,6 +2,7 @@
 
 import 'package:app_task/src/configs/constants/app_colors.dart';
 import 'package:app_task/src/page/account_profile/profile_screen.dart';
+import 'package:app_task/src/page/home/home_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../configs/widget/diaglog/dialog.dart';
@@ -79,7 +80,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
 
   Widget getBody()  {
     if(selectedIndex == 0) {
-      return Container();
+      return const HomeScreen();
     }else{
       return const ProfileAccountScreen();
     }

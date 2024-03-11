@@ -3,9 +3,6 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static const Color PRIMARY_PINK = Color.fromRGBO(47, 126, 121, 1);
-
-  static const Color SECONDARY_PINK = Color.fromRGBO(62, 124, 120, 1);
 
   static const Color PRIMARY_GREEN = Color.fromRGBO(47, 126, 121, 1);
 

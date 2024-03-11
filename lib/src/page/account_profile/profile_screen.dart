@@ -2,6 +2,7 @@ import 'package:app_task/src/configs/constants/app_space.dart';
 import 'package:app_task/src/configs/widget/diaglog/dialog.dart';
 import 'package:app_task/src/page/login/login.dart';
 import 'package:app_task/src/resource/firebase/authentication_server.dart';
+import 'package:app_task/src/utils/date_format_utils.dart';
 import 'package:app_task/src/utils/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -143,10 +144,7 @@ class _ProfileAccountScreenState extends State<ProfileAccountScreen> {
           informationUser(title: 'Name:', content: users?.fullName),
           informationUser(title: 'Email:', content: users?.emailAddress),
           informationUser(title: 'Member Since:', 
-            content: DateFormat('HH:mm dd-MM-yyyy').format(
-              DateFormat('yyyy-MM-dd HH:mm').parse(users?.dateCreate
-              ??DateTime.now().toString())
-            )),
+            content: AppDateUtils.formatDaTime(users?.dateCreate)),
           GestureDetector(
             onTap: () async{
               await onLogout();
