@@ -14,28 +14,26 @@ class BottomNavigationBarScreen extends StatefulWidget {
   final int? page;
 
   @override
-  State<BottomNavigationBarScreen> createState() => _BottomNavigationBarScreenState();
+  State<BottomNavigationBarScreen> createState() =>
+      _BottomNavigationBarScreenState();
 }
 
 class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
-
-  int selectedIndex=0;
+  int selectedIndex = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    selectedIndex= widget.page??0;
+    selectedIndex = widget.page ?? 0;
   }
-
 
   @override
   Widget build(BuildContext context) {
-
     return buildScreen();
   }
 
-  Widget buildScreen(){
+  Widget buildScreen() {
     return WillPopScope(
       onWillPop: () => showExitPopup(context),
       child: Scaffold(
@@ -46,24 +44,20 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
           elevation: 0,
           type: BottomNavigationBarType.fixed,
           currentIndex: selectedIndex,
-          selectedItemColor: AppColors.BLACK_500,
+          selectedItemColor: AppColors.COLOR_PINK,
           selectedLabelStyle: const TextStyle(
             color: AppColors.BLACK_500,
             fontWeight: FontWeight.w600,
           ),
-          selectedIconTheme: const IconThemeData(
-            color: AppColors.BLACK_500,
-            size: 25
-          ),
-          unselectedIconTheme: IconThemeData(
-            color: Colors.grey.withOpacity(0.8),
-            size: 20
-          ),
-          onTap: (index)=> changePage(index),
-          items: const[
+          selectedIconTheme:
+              const IconThemeData(color: AppColors.COLOR_PINK, size: 25),
+          unselectedIconTheme:
+              IconThemeData(color: Colors.grey.withOpacity(0.8), size: 20),
+          onTap: (index) => changePage(index),
+          items: const [
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              label:"Home",
+              label: "Home",
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.history),
@@ -71,7 +65,7 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.account_circle_rounded),
-              label:"Profile",
+              label: "Profile",
             ),
           ],
         ),
@@ -79,18 +73,19 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
     );
   }
 
-  Widget getBody()  {
-    if(selectedIndex == 0) {
+  Widget getBody() {
+    if (selectedIndex == 0) {
       return const HomeScreen();
-    } else if(selectedIndex==1){
+    } else if (selectedIndex == 1) {
       return const HistoryScreen();
-    } else{
+    } else {
       return const ProfileAccountScreen();
     }
   }
 
-  void changePage(int page){
-    selectedIndex=page;
-    setState(() {});();
+  void changePage(int page) {
+    selectedIndex = page;
+    setState(() {});
+    ();
   }
 }

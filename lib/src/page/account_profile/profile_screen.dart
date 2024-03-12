@@ -25,7 +25,6 @@ class ProfileAccountScreen extends StatefulWidget {
 }
 
 class _ProfileAccountScreenState extends State<ProfileAccountScreen> {
-
   Users? users;
 
   @override
@@ -41,7 +40,7 @@ class _ProfileAccountScreenState extends State<ProfileAccountScreen> {
     final userSnap = await docRef.get();
     final pref = await SharedPreferences.getInstance();
     if (userSnap.exists && userSnap.data() != null) {
-      final data= userSnap.data();
+      final data = userSnap.data();
       await pref.setString('idUser', data!['idUser']);
       await pref.setString('fullName', data['fullName']);
       await pref.setString('emailAddress', data['emailAddress']);
@@ -73,45 +72,44 @@ class _ProfileAccountScreenState extends State<ProfileAccountScreen> {
     );
   }
 
-  Widget headerProfileAccount(){
+  Widget headerProfileAccount() {
     return Container(
       // color: AppColors.COLOR_GREEN,
-      padding: EdgeInsets.symmetric(vertical: SizeToPadding.sizeBig,),
-      child: Paragraph(
-        content: 'Profile',
-        style: STYLE_VERY_BIG.copyWith(
-          color: AppColors.BLACK_500,
-          fontWeight: FontWeight.w800,
-        )
+      padding: EdgeInsets.symmetric(
+        vertical: SizeToPadding.sizeBig,
       ),
+      child: Paragraph(
+          content: 'Profile',
+          style: STYLE_VERY_BIG.copyWith(
+            color: AppColors.BLACK_500,
+            fontWeight: FontWeight.w800,
+          )),
     );
   }
 
-  Widget buildCircleAccount(){
+  Widget buildCircleAccount() {
     return Center(
       child: Container(
         alignment: Alignment.center,
         height: 100,
         width: 100,
         decoration: const BoxDecoration(
-          color: AppColors.COLOR_GREY_BLUE,
-          borderRadius: BorderRadius.all(
-            Radius.circular(100))
-        ),
+            color: AppColors.COLOR_PINK,
+            borderRadius: BorderRadius.all(Radius.circular(100))),
         child: const CircleAvatar(
           backgroundColor: AppColors.COLOR_WHITE,
           radius: 40,
           child: Icon(
             Icons.person,
             size: 75,
-            color: AppColors.COLOR_GREY_BLUE,
+            color: AppColors.COLOR_PINK,
           ),
         ),
       ),
     );
   }
 
-  Widget informationUser({String? title, String? content, Color? color}){
+  Widget informationUser({String? title, String? content, Color? color}) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: SizeToPadding.sizeSmall),
       child: Row(
@@ -123,12 +121,12 @@ class _ProfileAccountScreenState extends State<ProfileAccountScreen> {
               color: color,
             ),
           ),
-          SizedBox(width: SizeToPadding.sizeMedium,),
+          SizedBox(
+            width: SizeToPadding.sizeMedium,
+          ),
           Paragraph(
-            content: content??'',
-            style: STYLE_MEDIUM.copyWith(
-              fontWeight: FontWeight.w400
-            ),
+            content: content ?? '',
+            style: STYLE_MEDIUM.copyWith(fontWeight: FontWeight.w400),
           )
         ],
       ),
@@ -143,61 +141,63 @@ class _ProfileAccountScreenState extends State<ProfileAccountScreen> {
         children: [
           informationUser(title: 'Name:', content: users?.fullName),
           informationUser(title: 'Email:', content: users?.emailAddress),
-          informationUser(title: 'Member Since:', 
-            content: AppDateUtils.formatDaTime(users?.dateCreate)),
+          informationUser(
+              title: 'Member Since:',
+              content: AppDateUtils.formatDaTime(users?.dateCreate)),
           GestureDetector(
-            onTap: () async{
-              await onLogout();
-            },
-            child: informationUser(title: 'Log Out', color: AppColors.Red_Money)
-          ),
+              onTap: () async {
+                await onLogout();
+              },
+              child: informationUser(
+                  title: 'Log Out', color: AppColors.Red_Money)),
         ],
       ),
     );
-  }  
-
-  void goToLogin(){
-    Navigator.pushReplacement(context, MaterialPageRoute(
-      builder: (context) => const LoginScreen(),));
   }
 
-  Future<void> onDeleteAccount() async{
-    showDialog(
-      context: context, 
-      barrierDismissible: false,
-      builder: (context) => WarningDialog(
-        title: 'Delete account',
-        content: 'Do you want to delete your account?',
-        leftButtonName: 'Cancel',
-        rightButtonName: 'Confirm',
-        onTapLeft: () => Navigator.pop(context),
-        onTapRight: () {
-          Navigator.of(context).pop();
-          deletedLocal();
-          goToLogin();
-        },
-      )
-    );
+  void goToLogin() {
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ));
   }
 
-  Future<void> onLogout() async{
+  Future<void> onDeleteAccount() async {
     showDialog(
-      context: context, 
-      barrierDismissible: false,
-      builder: (context) => WarningDialog(
-        title: 'Logout',
-        content: 'Do you want to logout?',
-        leftButtonName: 'Cancel',
-        rightButtonName: 'Confirm',
-        onTapLeft: () => Navigator.pop(context),
-        onTapRight: () {
-          Navigator.of(context).pop();
-          logout();
-          deleteToken();
-          goToLogin();
-        },
-      )
-    );
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WarningDialog(
+              title: 'Delete account',
+              content: 'Do you want to delete your account?',
+              leftButtonName: 'Cancel',
+              rightButtonName: 'Confirm',
+              onTapLeft: () => Navigator.pop(context),
+              onTapRight: () {
+                Navigator.of(context).pop();
+                deletedLocal();
+                goToLogin();
+              },
+            ));
+  }
+
+  Future<void> onLogout() async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => WarningDialog(
+              title: 'Logout',
+              content: 'Do you want to logout?',
+              leftButtonName: 'Cancel',
+              rightButtonName: 'Confirm',
+              onTapLeft: () => Navigator.pop(context),
+              onTapRight: () {
+                Navigator.of(context).pop();
+                logout();
+                deleteToken();
+                goToLogin();
+              },
+            ));
   }
 
   Future<void> deletedLocal() async {

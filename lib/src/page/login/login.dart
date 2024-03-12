@@ -27,7 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController passController;
 
   bool isEnableButton = false;
-  bool isScroll=false;
+  bool isScroll = false;
 
   String? messagePass;
   String? messageMail;
@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     super.initState();
-    listFocus= List.generate(5, (index) => FocusNode());
+    listFocus = List.generate(5, (index) => FocusNode());
     setScroll();
     mailController = TextEditingController();
     passController = TextEditingController();
@@ -62,8 +62,9 @@ class _LoginScreenState extends State<LoginScreen> {
           resizeToAvoidBottomInset: true,
           backgroundColor: AppColors.BLACK_200,
           body: SingleChildScrollView(
-            physics: isScroll? const AlwaysScrollableScrollPhysics()
-              : const NeverScrollableScrollPhysics(),
+            physics: isScroll
+                ? const AlwaysScrollableScrollPhysics()
+                : const NeverScrollableScrollPhysics(),
             child: SizedBox(
               height: MediaQuery.sizeOf(context).height,
               width: double.maxFinite,
@@ -81,13 +82,13 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget buildContentImageLogin(){
+  Widget buildContentImageLogin() {
     return Padding(
       padding: const EdgeInsets.only(top: 50),
       child: Column(
         children: [
           Paragraph(
-            content: 'To Do List',
+            content: 'Task List',
             style: STYLE_VERY_BIG.copyWith(
               fontWeight: FontWeight.w600,
               fontSize: 40,
@@ -107,19 +108,17 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget buildImageLogin(){
+  Widget buildImageLogin() {
     return Container(
       color: AppColors.COLOR_WHITE,
-      height: 280,
+      height: 300,
       child: ClipPath(
         clipper: HeaderClipper(),
         child: Stack(
           fit: StackFit.expand,
           children: [
             Container(
-              decoration: const BoxDecoration(
-                color: AppColors.COLOR_PINK
-              ),
+              decoration: const BoxDecoration(color: AppColors.COLOR_PINK),
             ),
             buildContentImageLogin(),
           ],
@@ -128,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget buildFormLogin(){
+  Widget buildFormLogin() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
       child: Container(
@@ -205,24 +204,22 @@ class _LoginScreenState extends State<LoginScreen> {
         GestureDetector(
           onTap: () async {
             await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const RegisterScreen(),
-              ));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const RegisterScreen(),
+                ));
           },
           child: Paragraph(
             content: 'Create An Account',
             style: STYLE_MEDIUM.copyWith(
-                color: AppColors.COLOR_PINK_200, 
-                fontWeight: FontWeight.w600
-            ),
+                color: AppColors.COLOR_PINK_200, fontWeight: FontWeight.w600),
           ),
         ),
       ],
     );
   }
 
-  Widget buildTailLogin(){
+  Widget buildTailLogin() {
     return Expanded(
       child: Container(
         width: double.maxFinite,
@@ -240,11 +237,10 @@ class _LoginScreenState extends State<LoginScreen> {
         ));
   }
 
-  void onLoginButton(){
+  void onLoginButton() {
     LoadingDialog.showLoadingDialog(context);
-    Authentication()
-        .signIn(mailController.text.trim(), passController.text.trim(), 
-    () async{
+    Authentication().signIn(
+        mailController.text.trim(), passController.text.trim(), () async {
       LoadingDialog.hideLoadingDialog(context);
       await goToHome(context);
     }, (msg) {

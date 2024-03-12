@@ -17,24 +17,23 @@ class HomeAddScreen extends StatefulWidget {
 }
 
 class _HomeAddScreenState extends State<HomeAddScreen> {
-
   late TextEditingController titleController;
   late DateTime dateTime;
 
-  bool isEnableButton=false;
+  bool isEnableButton = false;
 
   @override
   void initState() {
     super.initState();
-    titleController= TextEditingController();
-    dateTime= DateTime.now();
+    titleController = TextEditingController();
+    dateTime = DateTime.now();
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: AppColors.BLACK_200,
+        backgroundColor: AppColors.BLACK_200.withOpacity(0.8),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -47,9 +46,9 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
     );
   }
 
-  Widget buildHeader(){
+  Widget buildHeader() {
     return Container(
-      height: 100,
+      height: 70,
       color: AppColors.COLOR_WHITE,
       alignment: Alignment.bottomCenter,
       padding: EdgeInsets.symmetric(vertical: SizeToPadding.sizeMedium),
@@ -60,51 +59,53 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
     );
   }
 
-  Widget buildFieldTitleCard(){
+  Widget buildFieldTitleCard() {
     return TextFormField(
       controller: titleController,
       decoration: const InputDecoration(
         enabledBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: AppColors.BLACK_200)
-        ),
+            borderSide: BorderSide(color: AppColors.BLACK_200)),
         hintText: 'Title',
       ),
       onChanged: (value) => onEnableButton(value),
     );
   }
 
-  Widget buildCalendar(){
+  Widget buildCalendar() {
     return BuildCalendar(
       dateTime: dateTime,
       onSelectDate: (date) => setState(() {
-        dateTime= date;
+        dateTime = date;
       }),
     );
   }
 
-  Widget buildButtonCard(){
+  Widget buildButtonCard() {
     return Padding(
       padding: EdgeInsets.only(right: SizeToPadding.sizeMedium),
       child: AppButton(
         enableButton: isEnableButton,
         content: 'Save',
-        onTap: ()=> onSave(),
+        onTap: () => onSave(),
       ),
     );
   }
 
-  Widget buildCardCalendar(){
+  Widget buildCardCalendar() {
     return Container(
       margin: EdgeInsets.only(
         left: SizeToPadding.sizeSmall,
         right: SizeToPadding.sizeSmall,
         top: SizeToPadding.sizeMedium,
       ),
-      padding: EdgeInsets.only(left: SizeToPadding.sizeMedium,
-        bottom: SizeToPadding.sizeVeryBig,),
+      padding: EdgeInsets.only(
+        left: SizeToPadding.sizeMedium,
+        bottom: SizeToPadding.sizeVeryBig,
+      ),
       decoration: BoxDecoration(
         color: AppColors.COLOR_WHITE,
-        borderRadius: BorderRadius.all(Radius.circular(BorderRadiusSize.sizeMedium)),
+        borderRadius:
+            BorderRadius.all(Radius.circular(BorderRadiusSize.sizeMedium)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,7 +118,7 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
     );
   }
 
-  void onSave(){
+  void onSave() {
     LoadingDialog.showLoadingDialog(context);
     FireStoreTodo.createTodoFirebase(ToDoModel(
       dateTime: dateTime.toString(),
@@ -125,27 +126,25 @@ class _HomeAddScreenState extends State<HomeAddScreen> {
       title: titleController.text.trim(),
     )).then((value) {
       LoadingDialog.hideLoadingDialog(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Paragraph(
-          content: 'Add Success',
-        ))
-      );
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Paragraph(
+        content: 'Add Success',
+      )));
       Navigator.pop(context);
-    }).catchError((onError){
+    }).catchError((onError) {
       LoadingDialog.hideLoadingDialog(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Paragraph(
-          content: '$onError',
-        ))
-      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Paragraph(
+        content: '$onError',
+      )));
     });
   }
 
-  void onEnableButton(String value){
-    if(value.isEmpty || value==''){
-      isEnableButton=false;
-    }else{
-      isEnableButton=true;
+  void onEnableButton(String value) {
+    if (value.isEmpty || value == '') {
+      isEnableButton = false;
+    } else {
+      isEnableButton = true;
     }
     setState(() {});
   }

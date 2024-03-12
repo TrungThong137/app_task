@@ -41,7 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   void initState() {
     super.initState();
-    listFocus= List.generate(4, (index) => FocusNode());
+    listFocus = List.generate(4, (index) => FocusNode());
     setScroll();
     fullNameController = TextEditingController();
     cnfPassController = TextEditingController();
@@ -49,7 +49,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     passController = TextEditingController();
   }
 
-   void setScroll() {
+  void setScroll() {
     for (var node in listFocus) {
       node.addListener(() {
         isScroll = listFocus.any((focus) => focus.hasFocus);
@@ -66,10 +66,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
         top: true,
         child: Scaffold(
           resizeToAvoidBottomInset: true,
-          backgroundColor:  AppColors.BLACK_200,
+          backgroundColor: AppColors.BLACK_200,
           body: SingleChildScrollView(
-            physics: isScroll? const AlwaysScrollableScrollPhysics()
-              : const NeverScrollableScrollPhysics(),
+            physics: isScroll
+                ? const AlwaysScrollableScrollPhysics()
+                : const NeverScrollableScrollPhysics(),
             child: SizedBox(
               height: MediaQuery.sizeOf(context).height,
               width: double.maxFinite,
@@ -77,7 +78,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 children: [
                   buildHeaderRegister(),
                   buildFormRegister(),
-                  Expanded(child: Container(
+                  Expanded(
+                      child: Container(
                     color: AppColors.COLOR_WHITE,
                   ))
                 ],
@@ -89,29 +91,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget buildButtonBackHeader(){
+  Widget buildButtonBackHeader() {
     return TextButton(
-      onPressed: () => Navigator.pop(context), 
-      child: Row(
-        children: [
-          const Icon(
-            Icons.arrow_back_ios_new,
-            color: AppColors.COLOR_WHITE,
-            size: 18,
-          ),
-          Paragraph(
-            content: 'Back',
-            style: STYLE_MEDIUM.copyWith(
-              fontWeight: FontWeight.w600,
+        onPressed: () => Navigator.pop(context),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.arrow_back_ios_new,
               color: AppColors.COLOR_WHITE,
+              size: 18,
             ),
-          )
-        ],
-      )
-    );
+            Paragraph(
+              content: 'Back',
+              style: STYLE_MEDIUM.copyWith(
+                fontWeight: FontWeight.w600,
+                color: AppColors.COLOR_WHITE,
+              ),
+            )
+          ],
+        ));
   }
 
-  Widget buildContentHeaderRegister(){
+  Widget buildContentHeaderRegister() {
     return Column(
       children: [
         buildButtonBackHeader(),
@@ -124,7 +125,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
         Paragraph(
-          content: 'Start organizing todos',
+          content: 'Start organizing tasks',
           style: STYLE_VERY_BIG.copyWith(
             fontWeight: FontWeight.w600,
             fontSize: 30,
@@ -135,19 +136,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget buildHeaderRegister(){
+  Widget buildHeaderRegister() {
     return Container(
       color: AppColors.COLOR_WHITE,
-      height: 270,
+      height: 300,
       child: ClipPath(
         clipper: HeaderClipper(),
         child: Stack(
           fit: StackFit.expand,
           children: [
             Container(
-              decoration: const BoxDecoration(
-                color: AppColors.COLOR_TEAL
-              ),
+              decoration: const BoxDecoration(color: AppColors.COLOR_TEAL),
             ),
             buildContentHeaderRegister(),
           ],
@@ -156,7 +155,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget buildFormRegister(){
+  Widget buildFormRegister() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Container(
@@ -169,8 +168,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
               vertical: 20, horizontal: SpaceBox.sizeMedium),
           child: Column(
             children: [
-              buildFieldMail(),
               buildFieldFullName(),
+              buildFieldMail(),
               buildFieldPass(),
               buildFieldPassConfirm(),
               buildRegisterButton(),
@@ -198,7 +197,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget buildFieldFullName() {
     return AppFormField(
       focusNode: listFocus[1],
-      labelText: 'name',
+      labelText: 'Name',
       hintText: 'Enter name',
       textEditingController: fullNameController,
       onChanged: (value) {

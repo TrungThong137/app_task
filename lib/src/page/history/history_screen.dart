@@ -8,6 +8,7 @@ import 'package:app_task/src/utils/date_format_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -17,8 +18,7 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-
-  List<ToDoModel> listTodo=[];
+  List<ToDoModel> listTodo = [];
 
   Timer? timer;
 
@@ -33,7 +33,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   void setState(fn) {
-    if(mounted) {
+    if (mounted) {
       super.setState(fn);
     }
   }
@@ -48,19 +48,19 @@ class _HistoryScreenState extends State<HistoryScreen> {
       return;
     } else {
       FirebaseFirestore.instance
-        .collection('infoTodo_AppTask')
-        .where('idUser', isEqualTo: idUser)
-        .where('isCheckBox', isEqualTo: true)
-        .orderBy('dateTime', descending: false)
-        .snapshots()
-        .map((snapshots) => snapshots.docs.map((doc) {
-              final data = doc.data();
-              return ToDoModel.fromJson(data);
-            }).toList())
-        .listen((data) {
-          listTodo = data;
-          setState(() {});
-        });
+          .collection('infoTodo_AppTask')
+          .where('idUser', isEqualTo: idUser)
+          .where('isCheckBox', isEqualTo: true)
+          .orderBy('dateTime', descending: false)
+          .snapshots()
+          .map((snapshots) => snapshots.docs.map((doc) {
+                final data = doc.data();
+                return ToDoModel.fromJson(data);
+              }).toList())
+          .listen((data) {
+        listTodo = data;
+        setState(() {});
+      });
     }
   }
 
@@ -85,9 +85,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Divider(color: AppColors.BLACK_200,),
+                const Divider(
+                  color: AppColors.BLACK_200,
+                ),
                 Visibility(
-                  visible: listTodo.isNotEmpty? true : false,
+                  visible: listTodo.isNotEmpty ? true : false,
                   child: Expanded(
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
@@ -104,45 +106,68 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
-  Widget buildItemToDo(int index){
-    return Column(
-      children: [
-        ListTile(
-          contentPadding: const EdgeInsets.only(),
-          title: Paragraph(
-            content: listTodo[index].title,
-            style: STYLE_MEDIUM.copyWith(fontWeight: FontWeight.w600),
-          ),
-          subtitle: Paragraph(
-            content: AppDateUtils.formatDaTime(listTodo[index].dateTime),
-            style: STYLE_SMALL.copyWith(fontWeight: FontWeight.w500,
-              color: AppColors.BLACK_400
-            ),
-          ),
-          trailing: Checkbox(
-            checkColor: AppColors.COLOR_PINK,
-            activeColor: AppColors.COLOR_WHITE,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            side: MaterialStateBorderSide.resolveWith(
-              (states) => const BorderSide(
-                width: 1.0,
-                color: AppColors.COLOR_PINK
-              ),
-            ),
-            value: listTodo[index].isCheckBox, 
-            onChanged: (value) async{
-              FireStoreTodo.updateTodoFirebase(ToDoModel(
-                isCheckBox: value!,
-                idTodo: listTodo[index].idTodo,
-              ));
-              await readDataTodoFirebase();
+  void doNothing(BuildContext context, String id) async {
+    await FireStoreTodo.removeTodoFirebase(id);
+    setState(() {});
+  }
+
+  Widget buildItemToDo(int index) {
+    return Slidable(
+      key: const ValueKey(0),
+      endActionPane: ActionPane(
+        motion: ScrollMotion(),
+        children: [
+          SlidableAction(
+            // An action can be bigger than the others.
+            flex: 2,
+            onPressed: (_) {
+              doNothing(context, listTodo[index].idTodo!);
             },
+            backgroundColor: Color(0xFFFE4A49),
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+            label: 'Delete',
+          )
+        ],
+      ),
+      child: Column(
+        children: [
+          ListTile(
+            contentPadding: const EdgeInsets.only(),
+            title: Paragraph(
+              content: listTodo[index].title,
+              style: STYLE_MEDIUM.copyWith(fontWeight: FontWeight.w600),
+            ),
+            subtitle: Paragraph(
+              content: AppDateUtils.formatDaTime(listTodo[index].dateTime),
+              style: STYLE_SMALL.copyWith(
+                  fontWeight: FontWeight.w500, color: AppColors.BLACK_400),
+            ),
+            trailing: Checkbox(
+              checkColor: AppColors.COLOR_PINK,
+              activeColor: AppColors.COLOR_WHITE,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              side: MaterialStateBorderSide.resolveWith(
+                (states) =>
+                    const BorderSide(width: 1.0, color: AppColors.COLOR_PINK),
+              ),
+              value: listTodo[index].isCheckBox,
+              onChanged: (value) async {
+                FireStoreTodo.updateTodoFirebase(ToDoModel(
+                  isCheckBox: value!,
+                  idTodo: listTodo[index].idTodo,
+                ));
+                await readDataTodoFirebase();
+              },
+            ),
           ),
-        ),
-        const Divider(color: AppColors.BLACK_200,),
-      ],
+          const Divider(
+            color: AppColors.BLACK_200,
+          ),
+        ],
+      ),
     );
   }
 
