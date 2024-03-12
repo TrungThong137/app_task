@@ -2,26 +2,21 @@ import 'dart:async';
 
 import 'package:app_task/src/configs/constants/constants.dart';
 import 'package:app_task/src/configs/widget/text/paragraph.dart';
-import 'package:app_task/src/page/home_add/home_add_screen.dart';
 import 'package:app_task/src/resource/firebase/firebase_todo.dart';
 import 'package:app_task/src/resource/model/todo_model.dart';
 import 'package:app_task/src/utils/date_format_utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HistoryScreen extends StatefulWidget {
+  const HistoryScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-
-  bool isCheckBox=false;
+class _HistoryScreenState extends State<HistoryScreen> {
 
   List<ToDoModel> listTodo=[];
 
@@ -32,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     if (mounted) {
       readDataTodoFirebase();
-      timer= Timer.periodic(const Duration(seconds: 2), (Timer t) => setState(() {}));
+      Timer.periodic(const Duration(seconds: 2), (Timer t) => setState(() {}));
     }
   }
 
@@ -54,8 +49,8 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       FirebaseFirestore.instance
         .collection('infoTodo_AppTask')
-        .where('idUser', isEqualTo: idUser,)
-        .where('isCheckBox', isEqualTo: false)
+        .where('idUser', isEqualTo: idUser)
+        .where('isCheckBox', isEqualTo: true)
         .orderBy('dateTime', descending: false)
         .snapshots()
         .map((snapshots) => snapshots.docs.map((doc) {
@@ -74,9 +69,13 @@ class _HomeScreenState extends State<HomeScreen> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          actions: [
-            buildButtonHeader(),
-          ],
+          centerTitle: true,
+          title: Paragraph(
+            content: 'History',
+            style: STYLE_BIG.copyWith(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -86,7 +85,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                buildTitleToDo(),
                 const Divider(color: AppColors.BLACK_200,),
                 Visibility(
                   visible: listTodo.isNotEmpty? true : false,
@@ -102,38 +100,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget buildButtonHeader() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: SizeToPadding.sizeMedium),
-      child: InkWell(
-        onTap: ()async {
-          await showModalBottomSheet(
-            enableDrag: true,
-            isScrollControlled: true,
-            context: context, 
-            builder: (context) => const HomeAddScreen(),
-          );
-          await readDataTodoFirebase();
-          setState(() {});
-        },
-        child: const Icon(
-          Icons.add, 
-          size: 30,
-          color: AppColors.COLOR_PINK,
-        ),
-      )
-    );
-  }
-
-  Widget buildTitleToDo(){
-    return Paragraph(
-      content: 'Task',
-      style: STYLE_VERY_BIG.copyWith(
-        fontWeight: FontWeight.w700
       ),
     );
   }
@@ -178,12 +144,6 @@ class _HomeScreenState extends State<HomeScreen> {
         const Divider(color: AppColors.BLACK_200,),
       ],
     );
-  }
-
-  void onAddToDo() {
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => const HomeAddScreen(),));
-    setState(() {});
   }
 
   // @override

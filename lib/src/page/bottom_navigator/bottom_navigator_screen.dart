@@ -2,6 +2,7 @@
 
 import 'package:app_task/src/configs/constants/app_colors.dart';
 import 'package:app_task/src/page/account_profile/profile_screen.dart';
+import 'package:app_task/src/page/history/history_screen.dart';
 import 'package:app_task/src/page/home/home_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -64,10 +65,10 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
               icon: Icon(Icons.home),
               label:"Home",
             ),
-            // BottomNavigationBarItem(
-            //   icon: Icon(Icons.notifications),
-            //   label: "notification",
-            // ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.history),
+              label: "History",
+            ),
             BottomNavigationBarItem(
               icon: Icon(Icons.account_circle_rounded),
               label:"Profile",
@@ -81,7 +82,9 @@ class _BottomNavigationBarScreenState extends State<BottomNavigationBarScreen> {
   Widget getBody()  {
     if(selectedIndex == 0) {
       return const HomeScreen();
-    }else{
+    } else if(selectedIndex==1){
+      return const HistoryScreen();
+    } else{
       return const ProfileAccountScreen();
     }
   }
