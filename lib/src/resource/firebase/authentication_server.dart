@@ -1,6 +1,5 @@
 
-import 'package:app_task/src/resource/firebase/firebase_body_index.dart';
-import 'package:app_task/src/resource/firebase/firebase_input_screen.dart';
+import 'package:app_task/src/resource/firebase/firebase_todo.dart';
 import 'package:app_task/src/resource/firebase/firebase_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -87,8 +86,7 @@ class Authentication {
       await user.delete();
       final id= user.uid;
       await FireStoreUser.removeUser(id.toString());
-      await FireStoreBodyIndex.removeBodyIndex(id.toString());
-      await FireStoreInputScreen.removeAllInputScreenFirebase(id.toString());
+      await FireStoreTodo.removeAllTodoFirebase(id.toString());
       await signOut();
     }
   }

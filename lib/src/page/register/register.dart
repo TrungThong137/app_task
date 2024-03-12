@@ -2,9 +2,12 @@
 
 import 'package:app_task/src/configs/widget/button/button.dart';
 import 'package:app_task/src/page/login/login.dart';
+import 'package:app_task/src/page/register/components/clipper.dart';
 import 'package:app_task/src/resource/firebase/authentication_server.dart';
 import 'package:app_task/src/utils/app_valid.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../configs/constants/constants.dart';
 import '../../configs/widget/diaglog/dialog.dart';
@@ -26,19 +29,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late TextEditingController fullNameController;
 
   bool isEnableButton = false;
+  bool isScroll = false;
 
   String? messagePass;
   String? messageMail;
   String? messageCnfPass;
   String? messageFullName;
 
+  late List<FocusNode> listFocus;
+
   @override
   void initState() {
     super.initState();
+    listFocus= List.generate(4, (index) => FocusNode());
+    setScroll();
     fullNameController = TextEditingController();
     cnfPassController = TextEditingController();
     mailController = TextEditingController();
     passController = TextEditingController();
+  }
+
+   void setScroll() {
+    for (var node in listFocus) {
+      node.addListener(() {
+        isScroll = listFocus.any((focus) => focus.hasFocus);
+        setState(() {});
+      });
+    }
   }
 
   @override
@@ -49,30 +66,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
         top: true,
         child: Scaffold(
           resizeToAvoidBottomInset: true,
-          backgroundColor:  AppColors.COLOR_PINK_200,
+          backgroundColor:  AppColors.BLACK_200,
           body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
-                  borderRadius: const BorderRadius.all(Radius.circular(20)),
-                ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: 20, horizontal: SpaceBox.sizeMedium),
-                  child: Column(
-                    children: [
-                      buildRegister(),
-                      buildFieldMail(),
-                      buildFieldFullName(),
-                      buildFieldPass(),
-                      buildFieldPassConfirm(),
-                      buildRegisterButton(),
-                      buildSignUpWidget(),
-                    ],
-                  ),
-                ),
+            physics: isScroll? const AlwaysScrollableScrollPhysics()
+              : const NeverScrollableScrollPhysics(),
+            child: SizedBox(
+              height: MediaQuery.sizeOf(context).height,
+              width: double.maxFinite,
+              child: Column(
+                children: [
+                  buildHeaderRegister(),
+                  buildFormRegister(),
+                  Expanded(child: Container(
+                    color: AppColors.COLOR_WHITE,
+                  ))
+                ],
               ),
             ),
           ),
@@ -81,18 +89,101 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget buildRegister() {
+  Widget buildButtonBackHeader(){
+    return TextButton(
+      onPressed: () => Navigator.pop(context), 
+      child: Row(
+        children: [
+          const Icon(
+            Icons.arrow_back_ios_new,
+            color: AppColors.COLOR_WHITE,
+            size: 18,
+          ),
+          Paragraph(
+            content: 'Back',
+            style: STYLE_MEDIUM.copyWith(
+              fontWeight: FontWeight.w600,
+              color: AppColors.COLOR_WHITE,
+            ),
+          )
+        ],
+      )
+    );
+  }
+
+  Widget buildContentHeaderRegister(){
+    return Column(
+      children: [
+        buildButtonBackHeader(),
+        Paragraph(
+          content: 'Register',
+          style: STYLE_VERY_BIG.copyWith(
+            fontWeight: FontWeight.w600,
+            fontSize: 40,
+            color: AppColors.COLOR_WHITE,
+          ),
+        ),
+        Paragraph(
+          content: 'Start organizing todos',
+          style: STYLE_VERY_BIG.copyWith(
+            fontWeight: FontWeight.w600,
+            fontSize: 30,
+            color: AppColors.COLOR_WHITE,
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget buildHeaderRegister(){
+    return Container(
+      color: AppColors.COLOR_WHITE,
+      height: 270,
+      child: ClipPath(
+        clipper: HeaderClipper(),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                color: AppColors.COLOR_TEAL
+              ),
+            ),
+            buildContentHeaderRegister(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildFormRegister(){
     return Padding(
-      padding: const EdgeInsets.only(bottom: 40),
-      child: Paragraph(
-        content: 'Sign Up',
-        style: STYLE_BIG.copyWith(fontWeight: FontWeight.w600, fontSize: 25),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.9),
+          borderRadius: const BorderRadius.all(Radius.circular(20)),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+              vertical: 20, horizontal: SpaceBox.sizeMedium),
+          child: Column(
+            children: [
+              buildFieldMail(),
+              buildFieldFullName(),
+              buildFieldPass(),
+              buildFieldPassConfirm(),
+              buildRegisterButton(),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget buildFieldMail() {
     return AppFormField(
+      focusNode: listFocus[0],
       labelText: 'Email',
       hintText: 'Enter email',
       textEditingController: mailController,
@@ -106,6 +197,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget buildFieldFullName() {
     return AppFormField(
+      focusNode: listFocus[1],
       labelText: 'name',
       hintText: 'Enter name',
       textEditingController: fullNameController,
@@ -119,6 +211,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget buildFieldPass() {
     return AppFormField(
+      focusNode: listFocus[2],
       labelText: 'Password',
       hintText: 'Enter password',
       textEditingController: passController,
@@ -133,6 +226,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget buildFieldPassConfirm() {
     return AppFormField(
+      focusNode: listFocus[3],
       labelText: 'Confirm password',
       hintText: 'Confirm password',
       textEditingController: cnfPassController,
@@ -147,32 +241,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   Widget buildRegisterButton() {
     return AppButton(
-      content: 'Sign Up',
+      content: 'Create Account',
       enableButton: isEnableButton,
       onTap: () => onRegister(),
-    );
-  }
-
-  Widget buildSignUpWidget() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Paragraph(
-          content: 'Do you already have an account? ',
-          style: STYLE_SMALL_BOLD.copyWith(
-            color: AppColors.BLACK_500,
-          ),
-        ),
-        TextButton(
-          onPressed: () => goToLogin(),
-          child: Paragraph(
-            content: 'Sign in',
-            style: STYLE_SMALL_BOLD.copyWith(
-                color:  AppColors.COLOR_PINK_200,
-                fontWeight: FontWeight.bold),
-          ),
-        ),
-      ],
     );
   }
 

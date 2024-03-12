@@ -3,9 +3,7 @@ import 'dart:async';
 import 'package:app_task/src/configs/widget/text/paragraph.dart';
 import 'package:app_task/src/page/bottom_navigator/bottom_navigator_screen.dart';
 import 'package:app_task/src/page/login/login.dart';
-import 'package:app_task/src/page/target_body/target_body_screen.dart';
 import 'package:app_task/src/utils/shared_preferences.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../configs/constants/constants.dart';
@@ -71,7 +69,7 @@ class _SplashScreenState extends State<SplashScreen> {
       body: SafeArea(
         child: Center(
           child: Paragraph(
-            content: 'Losing Weight',
+            content: 'To Do List',
             style: STYLE_MEDIUM.copyWith(
                 fontWeight: FontWeight.bold,
                 fontSize: 50.0,

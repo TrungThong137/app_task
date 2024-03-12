@@ -9,17 +9,11 @@ import 'package:app_task/src/page/login/components/clipper.dart';
 import 'package:app_task/src/page/register/register.dart';
 import 'package:app_task/src/resource/firebase/authentication_server.dart';
 import 'package:app_task/src/utils/app_valid.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
 import '../../configs/constants/constants.dart';
 import '../../configs/widget/form_field/app_form_field.dart';
 import '../../configs/widget/text/paragraph.dart';
-import '../../utils/shared_preferences.dart';
-import '../target_body/target_body_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -33,15 +27,29 @@ class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController passController;
 
   bool isEnableButton = false;
+  bool isScroll=false;
 
   String? messagePass;
   String? messageMail;
 
+  late List<FocusNode> listFocus;
+
   @override
   void initState() {
     super.initState();
+    listFocus= List.generate(5, (index) => FocusNode());
+    setScroll();
     mailController = TextEditingController();
     passController = TextEditingController();
+  }
+
+  void setScroll() {
+    for (var node in listFocus) {
+      node.addListener(() {
+        isScroll = listFocus.any((focus) => focus.hasFocus);
+        setState(() {});
+      });
+    }
   }
 
   @override
@@ -53,15 +61,19 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Scaffold(
           resizeToAvoidBottomInset: true,
           backgroundColor: AppColors.BLACK_200,
-          body: SizedBox(
-            height: MediaQuery.sizeOf(context).height,
-            width: double.maxFinite,
-            child: Column(
-              children: [
-                buildImageLogin(),
-                buildFormLogin(),
-                buildTailLogin(),
-              ],
+          body: SingleChildScrollView(
+            physics: isScroll? const AlwaysScrollableScrollPhysics()
+              : const NeverScrollableScrollPhysics(),
+            child: SizedBox(
+              height: MediaQuery.sizeOf(context).height,
+              width: double.maxFinite,
+              child: Column(
+                children: [
+                  buildImageLogin(),
+                  buildFormLogin(),
+                  buildTailLogin(),
+                ],
+              ),
             ),
           ),
         ),
@@ -71,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget buildContentImageLogin(){
     return Padding(
-      padding: EdgeInsets.only(top: SizeToPadding.sizeBig),
+      padding: const EdgeInsets.only(top: 50),
       child: Column(
         children: [
           Paragraph(
@@ -98,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget buildImageLogin(){
     return Container(
       color: AppColors.COLOR_WHITE,
-      height: 300,
+      height: 280,
       child: ClipPath(
         clipper: HeaderClipper(),
         child: Stack(
@@ -118,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget buildFormLogin(){
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.9),
@@ -142,6 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget buildFieldMail() {
     return AppFormField(
+      focusNode: listFocus[0],
       labelText: 'Email',
       hintText: 'Enter email',
       textEditingController: mailController,
@@ -155,6 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget buildFieldPass() {
     return AppFormField(
+      focusNode: listFocus[1],
       labelText: 'Password',
       hintText: 'Enter password',
       textEditingController: passController,
@@ -190,7 +204,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         GestureDetector(
           onTap: () async {
-            await Navigator.pushReplacement(
+            await Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => const RegisterScreen(),
